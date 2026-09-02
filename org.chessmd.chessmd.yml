@@ -1,19 +1,24 @@
 id: org.chessmd.chessmd
 runtime: org.kde.Platform
-runtime-version: '6.9'
+runtime-version: '6.10'
 sdk: org.kde.Sdk
 command: start.sh
 
-finish-args: 
+finish-args:
   - --share=ipc
   - --share=network
   - --socket=x11
   - --device=dri
-  
+
 modules:
   - name: Stockfish
     buildsystem: simple
     subdir: src
+    build-commands:
+      - cp ../nn-1c0000000000.nnue .
+      - cp ../nn-37f18f62d772.nnue .
+      - make build -j${FLATPAK_BUILDER_N_JOBS}
+      - install -Dm755 stockfish /app/engine/stockfish
     sources:
       - type: archive
         url: https://github.com/official-stockfish/Stockfish/archive/refs/tags/sf_17.1.tar.gz
@@ -24,38 +29,33 @@ modules:
       - type: file
         url: https://tests.stockfishchess.org/api/nn/nn-37f18f62d772.nnue
         sha256: 37f18f62d772f3107e1d6aaca3898c130c3c86f2ab63e6555fbbca20635a899d
-    build-commands:
-      - cp ../nn-1c0000000000.nnue .
-      - cp ../nn-37f18f62d772.nnue .
-      - make build -j${FLATPAK_BUILDER_N_JOBS}
-      - install -Dm755 stockfish /app/engine/stockfish
-      
+
   - name: chessmd-opening
     buildsystem: simple
+    build-commands:
+      - install -Dm755 start.sh /app/bin/start.sh
+      - install -D opening/openings.bin /app/opening/openings.bin
+      - install -D opening/openings.headers /app/opening/openings.headers
     sources:
       - type: file
         path: start.sh
       - type: archive
         url: https://github.com/ChessMD/ChessMD/releases/download/v1.0/ChessMD_portable.zip
         sha256: 05d8953f912f76126a677b12aa89a08131e0d8252ec8d513091808c79fc0e70b
-    build-commands:
-      - install -Dm755 start.sh /app/bin/start.sh
-      - install -D opening/openings.bin /app/opening/openings.bin
-      - install -D opening/openings.headers /app/opening/openings.headers
-      
-  
+
   - name: ChessMD
     buildsystem: cmake-ninja
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=RelWithDebInfo 
-    sources:
-      - type: archive
-        url: https://github.com/ChessMD/ChessMD/archive/refs/tags/v1.0.3.1.tar.gz
-        sha256: e35bd7d51e7f50fc5c2bd0b7028eb146a1c72387e836b50d5cddf186a6b8c109
     no-make-install: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     build-commands:
       - install -Dm755 ChessMD /app/bin/ChessMD
       - install -D desktop/chessmd.metainfo.xml /app/share/metainfo/org.chessmd.chessmd.metainfo.xml
       - install -D desktop/chessmd.desktop /app/share/applications/org.chessmd.chessmd.desktop
       - install -D desktop/chessmd.svg /app/share/icons/hicolor/scalable/apps/org.chessmd.chessmd.svg
-        
+    sources:
+      - type: archive
+        url: https://github.com/ChessMD/ChessMD/archive/refs/tags/v1.0.3.1.tar.gz
+        sha256: e35bd7d51e7f50fc5c2bd0b7028eb146a1c72387e836b50d5cddf186a6b8c109
+      - type: patch
+        path: fix-build-errors.patch

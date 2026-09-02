@@ -1,0 +1,38 @@
+From 1db36b54e11af3eba38949eca916bb919b7d267b Mon Sep 17 00:00:00 2001
+From: Sabri Ünal <yakushabb@gmail.com>
+Date: Thu, 4 Jun 2026 21:37:18 +0300
+Subject: [PATCH] Fix build errors
+
+Signed-off-by: Sabri Ünal <yakushabb@gmail.com>
+---
+ gameplayviewer.h   | 1 +
+ settingsdialog.cpp | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/gameplayviewer.h b/gameplayviewer.h
+index b117d60..bea1360 100644
+--- a/gameplayviewer.h
++++ b/gameplayviewer.h
+@@ -3,6 +3,7 @@
+ 
+ #include <QWidget>
+ #include <QTimer>
++#include <QElapsedTimer>
+ #include <QSharedPointer>
+ #include <QComboBox>
+ #include <QSpinBox>
+diff --git a/settingsdialog.cpp b/settingsdialog.cpp
+index 0cc7be6..047d1f9 100644
+--- a/settingsdialog.cpp
++++ b/settingsdialog.cpp
+@@ -17,6 +17,7 @@
+ #include <QComboBox>
+ #include <QTemporaryFile>
+ #include <fstream>
++#include <QElapsedTimer>
+ 
+ SettingsDialog::SettingsDialog(QWidget* parent)
+     : QDialog(parent), mOpeningsPath("")
+--
+libgit2 1.7.2
+
