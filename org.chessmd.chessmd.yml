@@ -17,7 +17,7 @@ modules:
     build-commands:
       - cp ../nn-1c0000000000.nnue .
       - cp ../nn-37f18f62d772.nnue .
-      - make build -j${FLATPAK_BUILDER_N_JOBS}
+      - if [ ${FLATPAK_ARCH} == "aarch64" ]; then make build -j${FLATPAK_BUILDER_N_JOBS} ARCH=armv8; else make build -j${FLATPAK_BUILDER_N_JOBS}; fi
       - install -Dm755 stockfish /app/engine/stockfish
     sources:
       - type: archive
@@ -40,8 +40,8 @@ modules:
       - type: file
         path: start.sh
       - type: archive
-        url: https://github.com/ChessMD/ChessMD/releases/download/v1.0/ChessMD_portable.zip
-        sha256: 05d8953f912f76126a677b12aa89a08131e0d8252ec8d513091808c79fc0e70b
+        url: https://github.com/ChessMD/ChessMD/releases/download/v1.1/ChessMD_portable.zip
+        sha256: c1dbcb0e2ed646a67fae9774df06a830cf339ab26c04210aec19b65219f5a8ef 
 
   - name: ChessMD
     buildsystem: cmake-ninja
@@ -50,12 +50,12 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     build-commands:
       - install -Dm755 ChessMD /app/bin/ChessMD
-      - install -D desktop/chessmd.metainfo.xml /app/share/metainfo/org.chessmd.chessmd.metainfo.xml
-      - install -D desktop/chessmd.desktop /app/share/applications/org.chessmd.chessmd.desktop
-      - install -D desktop/chessmd.svg /app/share/icons/hicolor/scalable/apps/org.chessmd.chessmd.svg
+      - install -D desktop/flathub/chessmd.metainfo.xml /app/share/metainfo/org.chessmd.chessmd.metainfo.xml
+      - install -D desktop/flathub/chessmd.desktop /app/share/applications/org.chessmd.chessmd.desktop
+      - install -D desktop/flathub/chessmd.svg /app/share/icons/hicolor/scalable/apps/org.chessmd.chessmd.svg
     sources:
       - type: archive
-        url: https://github.com/ChessMD/ChessMD/archive/refs/tags/v1.0.3.1.tar.gz
-        sha256: e35bd7d51e7f50fc5c2bd0b7028eb146a1c72387e836b50d5cddf186a6b8c109
+        url: https://github.com/ChessMD/ChessMD/archive/refs/tags/v1.1.1.tar.gz
+        sha256: c392a802dbc094c8e67d4027f7674982ad44557cd54570c130c9aa5aaa042393 
       - type: patch
         path: fix-build-errors.patch
